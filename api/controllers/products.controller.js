@@ -1,4 +1,4 @@
-const ProductsModel = require("../models/products.model");
+const ProductsModel = require("../models/productos.model");
 const bcrypt = require("bcrypt");
 
 module.exports = {

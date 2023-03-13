@@ -4,7 +4,7 @@ const { authUser, adminCheck } = require("../utils"); // Authenticated Route
 const {
   addProduct,
   createProduct,
-} = require("../controllers/products.controllers");
+}= require("../controllers/products.controller");
 
 
 router.get("/products", authUser, addProduct);
