@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const listtSchema = new mongoose.Schema({
+const ListSchema = new mongoose.Schema({
 
   name: {
     type: String,
     required: true,
-    enum: ["Lo tengo en casa", "Para Comrar"] 
+    enum: ["Lo tengo en casa", "Para Comrar","Todos los productos"] 
 },
   productos: [
     {
@@ -13,5 +13,5 @@ const listtSchema = new mongoose.Schema({
     },
   ],
 });
-const listtModel = mongoose.model('list', listSchema);
-module.exports = listModel
+const ListModel = mongoose.model('list', ListSchema);
+module.exports = ListModel

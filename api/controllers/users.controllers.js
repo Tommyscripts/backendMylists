@@ -5,11 +5,7 @@ module.exports = {
   getUserById,
   deleteUserById,
   updateUser,
-  createUser,
-  addProduct,
-  createList,
-  updateList,
-  getList
+  createUser
 };
 
 function getUserById(req, res) {
@@ -43,37 +39,3 @@ function createUser(req, res) {
     .catch((err) => res.json(err));
 }
 
-function addProduct(req, res) {
-  UserModel.findById(res.locals.user.id)
-    .populate({path:"favorites",populate:{path:"restaurant"}})
-    .then((result) => res.json(result.favorites))
-    .catch((err) => res.json(err));
-}
-
-function createList(req, res) {
-  UserModel.findById(res.locals.user.id)
-    .then((result) => {
-      result.favorites.push(req.body.id);
-      result.save().then((fav) => {
-        res.json(result.favorites);
-      });
-    })
-    .catch((err) => res.json(err));
-}
-
-function updateList(req, res) {
-  UserModel.findById(res.locals.user.id)
-  .then(user => {
-    let index = user.favorites.indexOf(req.body.id)
-    user.favorites.splice(index, 1)
-    user.save()
-    res.json(user)
-  })
-    .catch((err) => res.json(err));
-}
-
-function getList(req, res) {
-  UserModel.findById(res.locals.user.id)
-    .then((result) => res.json(result.favorites))
-    .catch((err) => res.json(err));
-}
