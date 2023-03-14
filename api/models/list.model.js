@@ -4,7 +4,6 @@ const ListSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    enum: ["Lo tengo en casa", "Para Comrar","Todos los productos"] 
 },
   productos: [
     {

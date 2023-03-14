@@ -1,6 +1,7 @@
 const ListModel = require("../models/list.model");
 const bcrypt = require("bcrypt");
 
+
 module.exports = {
   createList,
   updateList,
@@ -9,16 +10,13 @@ module.exports = {
 };
 
 function createList(req, res) {
-    ListModel.findById(res.locals.user.id)
-      .then((result) => {
-        result.favorites.push(req.body.id);
-        result.save().then((fav) => {
-          res.json(result.favorites);
-        });
-      })
-      .catch((err) => res.json(err));
-  }
-  
+  ListModel.create(req.body)
+  .then((list)=>
+    res.json(list)
+  )
+  .catch((err) => res.json(err));
+}
+
   function updateList(req, res) {
     ListModel.findById(res.locals.user.id)
     .then(user => {
