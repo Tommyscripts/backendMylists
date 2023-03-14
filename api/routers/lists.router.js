@@ -12,5 +12,5 @@ const {
 router.get("/list", authUser,getList)
 router.post("/list", authUser, createList);
 router.patch("/list", authUser, updateList);
-router.delete("/list", authUser,roleCheck, deleteListById);
+router.delete("/list/:id", authUser, deleteListById);
 module.exports = router;

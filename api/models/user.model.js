@@ -20,10 +20,10 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
-  Listas: [
+  listas: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "listas",
+      ref: "list"
     },
   ],
 });

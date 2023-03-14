@@ -1,4 +1,5 @@
 const ListModel = require("../models/list.model");
+const UserModel = require("../models/user.model")
 const bcrypt = require("bcrypt");
 
 
@@ -12,7 +13,16 @@ module.exports = {
 function createList(req, res) {
   ListModel.create(req.body)
   .then((list)=>
-    res.json(list)
+    {
+      UserModel.findByIdAndUpdate(res.locals.user.id)
+      .then((user)=>{
+        user.listas.push(list)
+        user.save(),
+        res.json(user)
+    })
+    .catch((err) => res.json(err));
+    }
+    
   )
   .catch((err) => res.json(err));
 }
@@ -29,12 +39,13 @@ function createList(req, res) {
   }
   
   function getList(req, res) {
-    ListModel.findById(res.locals.user.id)
-      .then((result) => res.json(result.favorites))
+    UserModel.findById(res.locals.user.id)
+      .populate("listas")
+      .then((result) => res.json(result.listas))
       .catch((err) => res.json(err));
   }
   function deleteListById(req, res) {
-    ListModel.findByIdAndDelete(res.locals.user.id)
-      .then((response) => res.json(response))
+    ListModel.findByIdAndDelete(req.params.id)
+      .then((response) =>res.json(response))  
       .catch((err) => res.json(err));
   }
