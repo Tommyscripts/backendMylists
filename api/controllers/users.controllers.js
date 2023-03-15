@@ -31,17 +31,18 @@ function deleteUserById(req, res) {
     .catch((err) => res.json(err));
 }
 
-
-async function createUser(req, res) {
-  try {
-    const user = await UserModel.create(req.body);
-    const rest = await ListModel.findById(user.listas);
-    rest.users.push(user.id)
-    //guardar siempre los cambios
-    await rest.save()
-    //
-    res.json(user);
-  } catch (error) {
-    res.json(error);
+function createUser(req, res) {
+  if (req.body.password) {
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
   }
+  UserModel.create(req.body)
+    .then((user) => {
+    ListModel.findOne({name:"Todos los productos"})
+        .then((res)=>{
+          user.listas.push(res._id.toLocaleString())
+          user.save(),
+          res.json(user)
+        }).catch((err) => res.json(err));
+    })
+    .catch((err) => res.json(err));
 }
