@@ -8,7 +8,7 @@ const {
 
 
 router.get("/products", authUser, addProduct);
-router.post("/products", adminCheck, createProduct);
+router.post("/products",authUser, adminCheck, createProduct);
 
 
 

@@ -15,13 +15,7 @@ function addProduct(req, res) {
   }
 
   function createProduct(req, res) {
-    const products = res.locals.product;
-    if (req.body.password) {
-      req.body.password = bcrypt.hashSync(req.body.password, 10);
-    }
-    ProductsModel.findByIdAndUpdate(products, req.body, {
-      new: true,
-    })
-      .then((response) => res.json(response))
-      .catch((err) => res.json(err));
+    ProductsModel.create(req.body)
+    .then((result) => res.json(result))
+    .catch((err) => res.json(err));
   }

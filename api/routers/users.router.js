@@ -9,7 +9,7 @@ const {
 } = require("../controllers/users.controllers");
 
 router.get("/profile", authUser, getUserById);
-router.post('/admin',authUser,adminCheck,createUser);
+router.post('/admin',adminCheck,createUser);
 router.put("/profile",authUser, updateUser);
 router.delete("/profile", authUser, deleteUserById);
 ;
