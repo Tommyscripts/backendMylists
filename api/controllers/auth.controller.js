@@ -9,13 +9,9 @@ async function signup(req, res) {
     req.body.password = bcrypt.hashSync(req.body.password, 10);
     const user = await UserModel.create(req.body);
     const lists = await ListModel.findOne({ name: "Todos los productos" })
-      .then((res) => {
-        user.listas.push(res._id.toLocaleString());
+  
+        user.listas.push(lists._id.toLocaleString());
         user.save();
-        res.json(user);
-      })
-      .catch((err) => res.json(err));
-
     const payload = { email: user.email };
 
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "10h" });
