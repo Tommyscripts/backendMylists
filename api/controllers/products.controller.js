@@ -1,4 +1,5 @@
 const ProductsModel = require("../models/productos.model");
+const ListModel = require("../models/list.model")
 const bcrypt = require("bcrypt");
 
 module.exports = {
@@ -13,6 +14,12 @@ function addProduct(req, res) {
 }
 function createProduct(req, res) {
   ProductsModel.create(req.body)
-    .then((result) => res.json(result))
-    .catch((err) => res.json(err));
+  .then((products) => {
+    ListModel.findOneAndUpdate({name:"Todos los productos"})
+        .then((respond)=>{
+          respond.productos.push(products._id.toLocaleString())
+          respond.save(),
+          res.json(respond)
+        }).catch((err) => res.json(err));
+    })
 }
