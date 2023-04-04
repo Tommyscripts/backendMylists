@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { authUser, adminCheck } = require("../utils"); // Authenticated Route
+const { authUser, adminCheck, roleCheck } = require("../utils"); // Authenticated Route
 
 const {
   createList,
@@ -12,5 +12,5 @@ const {
 router.get("/list", authUser,getList)
 router.post("/list", authUser, createList);
 router.patch("/list", authUser, updateList);
-router.delete("/list", authUser, deleteListById);
+router.delete("/list/:id", authUser, deleteListById);
 module.exports = router;

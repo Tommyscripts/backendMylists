@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const authRouter = require('./auth.router')
-const productsRouter = require('./products.router')
-const listRouter = require('./list.router')
+const authRouter = require('./auth.router.js')
+const productsRouter = require('./products.router.js')
+const listRouter = require('./lists.router.js')
 const userRouter = require('./users.router.js')
 
 

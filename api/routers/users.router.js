@@ -12,5 +12,4 @@ router.get("/profile", authUser, getUserById);
 router.post('/admin',authUser,adminCheck,createUser);
 router.put("/profile",authUser, updateUser);
 router.delete("/profile", authUser, deleteUserById);
-;
 module.exports = router;

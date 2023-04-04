@@ -3,9 +3,13 @@ const { authUser, adminCheck } = require("../utils"); // Authenticated Route
 
 const {
   addProduct,
-} = require("../controllers/products.controllers");
+  createProduct,
+}= require("../controllers/products.controller");
 
 
 router.get("/products", authUser, addProduct);
+router.post("/products",authUser, adminCheck, createProduct);
+
+
 
 module.exports = router;
