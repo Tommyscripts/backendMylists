@@ -9,8 +9,11 @@ async function signup(req, res) {
     req.body.password = bcrypt.hashSync(req.body.password, 10);
     const user = await UserModel.create(req.body);
     const lists = await ListModel.findOne({ name: "Todos los productos" })
-  
+    const listas = await ListModel.create({name: "Lista de compra"})
+    const listas2 = await ListModel.create({name: "Lista de casa"})
         user.listas.push(lists._id.toLocaleString());
+        user.listas.push(listas._id.toLocaleString());
+        user.listas.push(listas2._id.toLocaleString());
         user.save();
     const payload = { email: user.email };
 
