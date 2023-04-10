@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 module.exports = {
   addProduct,
   createProduct,
+  deleteProductById
 };
 function addProduct(req, res) {
   ProductsModel.findById(productos._id)
@@ -22,4 +23,10 @@ function createProduct(req, res) {
           res.json(respond)
         }).catch((err) => res.json(err));
     })
+}
+
+function deleteProductById(req, res) {
+  ListModel.findByIdAndDelete(req.params.id)
+    .then((response) =>res.json(response))  
+    .catch((err) => res.json(err));
 }
