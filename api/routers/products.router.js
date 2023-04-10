@@ -10,7 +10,7 @@ const {
 
 router.get("/products", authUser, addProduct);
 router.post("/products",authUser, adminCheck, createProduct);
-router.delete("/products/:id", adminCheck,deleteProductById);
+router.delete("/products/:id",authUser, adminCheck,deleteProductById);
 
 
 module.exports = router;
