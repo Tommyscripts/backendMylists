@@ -8,9 +8,8 @@ module.exports = {
   deleteProductById
 };
 function addProduct(req, res) {
-  ProductsModel.findById(productos._id)
-    .populate({ path: "productos", populate: { path: "list" } })
-    .then((result) => res.json(result.favorites))
+  ProductsModel.find()
+    .then((result) => res.json(result))
     .catch((err) => res.json(err));
 }
 function createProduct(req, res) {
