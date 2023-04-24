@@ -10,8 +10,13 @@ module.exports = {
 };
 
 function getUserById(req, res) {
-  res.json(res.locals.user);
-}
+  const users = res.locals.user;
+  UserModel.findById(users.id)
+  .populate("listas")
+  .then((response)=> res.json(response))
+  .catch((err)=> res.json(err))
+ }
+
 
 function updateUser(req, res) {
   const users = res.locals.user;
