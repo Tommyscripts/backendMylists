@@ -57,26 +57,27 @@ function createUser(req, res) {
 
 function getListaProducto(req, res) {
   UserModel.findById(res.locals.user.id)
-    .populate({ path: "favorites", populate: { path: "restaurant" } })
-    .then((result) => res.json(result.favorites))
+    .populate("listas")
+    .then((result) => res.json(result.listas))
     .catch((err) => res.json(err));
 }
 
 function createListAdd(req, res) {
   UserModel.findById(res.locals.user.id)
     .then((result) => {
-      result.favorites.push(req.body.id);
+      result.listas.push(req.body.id);
       result.save().then((fav) => {
-        res.json(result.favorites);
+        res.json(result.listas);
       });
     })
     .catch((err) => res.json(err));
 }
+
 function updateListaRemove(req, res) {
   UserModel.findById(res.locals.user.id)
   .then(user => {
-    let index = user.favorites.indexOf(req.body.id)
-    user.favorites.splice(index, 1)
+    let index = user.listas.indexOf(req.body.id)
+    user.listas.splice(index, 1)
     user.save()
     res.json(user)
   })
@@ -84,6 +85,6 @@ function updateListaRemove(req, res) {
 }
 function getLista(req, res) {
   UserModel.findById(res.locals.user.id)
-    .then((result) => res.json(result.favorites))
+    .then((result) => res.json(result.listas))
     .catch((err) => res.json(err));
 }
