@@ -7,9 +7,10 @@ module.exports = {
   deleteUserById,
   updateUser,
   createUser,
-  createListsProducts,
-  getListsProducts,
-  updateListsProducts
+  getListaProducto,
+  getLista,
+  createListAdd,
+  updateListaRemove,
 };
 
 function getUserById(req, res) {
@@ -54,14 +55,14 @@ function createUser(req, res) {
     .catch((err) => res.json(err));
 }
 
-function getListsProducts(req, res) {
+function getListaProducto(req, res) {
   UserModel.findById(res.locals.user.id)
     .populate({ path: "favorites", populate: { path: "restaurant" } })
     .then((result) => res.json(result.favorites))
     .catch((err) => res.json(err));
 }
 
-function createListsProducts(req, res) {
+function createListAdd(req, res) {
   UserModel.findById(res.locals.user.id)
     .then((result) => {
       result.favorites.push(req.body.id);
@@ -71,7 +72,7 @@ function createListsProducts(req, res) {
     })
     .catch((err) => res.json(err));
 }
-function updateListsProducts(req, res) {
+function updateListaRemove(req, res) {
   UserModel.findById(res.locals.user.id)
   .then(user => {
     let index = user.favorites.indexOf(req.body.id)
@@ -79,5 +80,10 @@ function updateListsProducts(req, res) {
     user.save()
     res.json(user)
   })
+    .catch((err) => res.json(err));
+}
+function getLista(req, res) {
+  UserModel.findById(res.locals.user.id)
+    .then((result) => res.json(result.favorites))
     .catch((err) => res.json(err));
 }

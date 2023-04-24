@@ -6,16 +6,18 @@ const {
   deleteUserById,
   updateUser,
   createUser,
-  getListsProducts,
-  createListsProducts,
-  updateListsProducts
+  getListaProducto,
+  getLista,
+  createListAdd,
+  updateListaRemove,
 } = require("../controllers/users.controllers");
 
 router.get("/profile", authUser, getUserById);
 router.post('/admin',authUser,adminCheck,createUser);
 router.put("/profile",authUser, updateUser);
 router.delete("/profile", authUser, deleteUserById);
-router.get("/lista/producto",authUser,getListsProducts)
-router.create("/lista/add",authUser,createListsProducts)
-router.path("/lista/remove",authUser,updateListsProducts)
+router.get("/lista", authUser, getLista);
+router.get("/lista/producto", authUser,getListaProducto)
+router.patch("/lista/add", authUser, createListAdd);
+router.patch("/lista/remove", authUser, updateListaRemove);
 module.exports = router;
