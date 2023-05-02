@@ -40,7 +40,7 @@ function createList(req, res) {
   
   function getList(req, res) {
     UserModel.findById(res.locals.user.id)
-      .populate("listas")
+      .populate({path:"listas", populate:{path:"productos"}})
       .then((result) => res.json(result.listas))
       .catch((err) => res.json(err));
   }

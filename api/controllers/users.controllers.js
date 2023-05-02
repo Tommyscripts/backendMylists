@@ -18,7 +18,7 @@ module.exports = {
 function getUserById(req, res) {
   const users = res.locals.user;
   UserModel.findById(users.id)
-    .populate("listas")
+  .populate({path:"listas", populate:{path:"productos"}})
     .then((response) => res.json(response))
     .catch((err) => res.json(err));
 }

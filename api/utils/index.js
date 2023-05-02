@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken')
 const UserModel = require('../models/user.model')
 
-
 // Authenticate Middleware
 function authUser (req, res, next) {
   if (!req.headers.token) {
@@ -18,7 +17,6 @@ function authUser (req, res, next) {
     })
   }
 }
-
 function adminCheck (req, res, next) {
   if (res.locals.user.role === 'admin'){
     next()
@@ -26,7 +24,6 @@ function adminCheck (req, res, next) {
     res.status(401).json('Not authorized')
   }
 }
-
 function roleCheck (req, res, next) {
   if (res.locals.user.role === 'admin' || res.locals.user._id.toString() === req.params.id) {
     next()
@@ -34,7 +31,6 @@ function roleCheck (req, res, next) {
     res.status(403).json('Not Authorized')
   }
 }
-
 module.exports = {
   authUser,
   adminCheck,

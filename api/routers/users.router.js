@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { authUser, adminCheck } = require("../utils"); // Authenticated Route
+const { authUser, adminCheck, roleCheck } = require("../utils"); // Authenticated Route
 
 const {
   getUserById,
