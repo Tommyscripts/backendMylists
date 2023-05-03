@@ -12,7 +12,8 @@ module.exports = {
   getListaProducto,
   getLista,
   createListAdd,
-  updateListaRemove,
+  updateListaRemoveCompra,
+  updateListaRemoveCasa
 };
 
 function getUserById(req, res) {
@@ -65,27 +66,33 @@ function getListaProducto(req, res) {
 }
 
 function createListAdd(req, res) {
-  console.log(req.body.id)
   ListModel.findById(req.body.id)
     .then((result) => {
-      console.log(result)
       result.productos.push(req.body.producto);
       result.save();
       res.json(result);
-      console.log(req.body.id)
-      console.log(result)
     })
     .catch((err) => res.json(err));
 }
 
-function updateListaRemove(req, res) {
+function updateListaRemoveCasa(req, res) {
   UserModel.findById(res.locals.user.id)
-    .then((user) => {
-      let index = user.listas.indexOf(req.body.id);
-      user.listas.splice(index, 1);
-      user.save();
-      res.json(user);
-    })
+  .then(user => {
+    let index = user.favorites.indexOf(req.body.id)
+    user.favorites.splice(index, 1)
+    user.save()
+    res.json(user)
+  })
+    .catch((err) => res.json(err));
+}
+function updateListaRemoveCompra(req, res) {
+  UserModel.findById(res.locals.user.id)
+  .then(user => {
+    let index = user.favorites.indexOf(req.body.id)
+    user.favorites.splice(index, 1)
+    user.save()
+    res.json(user)
+  })
     .catch((err) => res.json(err));
 }
 function getLista(req, res) {
