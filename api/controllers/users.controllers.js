@@ -1,7 +1,6 @@
 const UserModel = require("../models/user.model");
 const ListModel = require("../models/list.model");
 
-
 const bcrypt = require("bcrypt");
 
 module.exports = {
@@ -13,13 +12,13 @@ module.exports = {
   getLista,
   createListAdd,
   updateListaRemoveCompra,
-  updateListaRemoveCasa
+  updateListaRemoveCasa,
 };
 
 function getUserById(req, res) {
   const users = res.locals.user;
   UserModel.findById(users.id)
-  .populate({path:"listas", populate:{path:"productos"}})
+    .populate({ path: "listas", populate: { path: "productos" } })
     .then((response) => res.json(response))
     .catch((err) => res.json(err));
 }
@@ -76,23 +75,52 @@ function createListAdd(req, res) {
 }
 
 function updateListaRemoveCasa(req, res) {
-  UserModel.findById(res.locals.user.id)
-  .then(user => {
-    let index = user.favorites.indexOf(req.body.id)
-    user.favorites.splice(index, 1)
-    user.save()
-    res.json(user)
-  })
+  const users = res.locals.user;
+  UserModel.findById(users.id)
+  .populate({path:"listas", populate:{path:"productos"}})
+    .then((user) => {
+      ListModel.find({ name: "Lista de casa" })
+        .then((list) => {
+          let index = list[0].productos.indexOf(req.params.id);
+          list[0].productos.splice(index, 1);
+          list[0].save();
+          ListModel.find({name:"Lista de compra"})
+          .then((list)=>{
+            list[0].productos.push(req.params.id)
+            list[0].save()
+            res.json(user)
+        })
+        .catch((err)=> res.json(err))
+        })
+        .catch((err) => res.json(err))
+
+    })
+
     .catch((err) => res.json(err));
 }
+
 function updateListaRemoveCompra(req, res) {
-  UserModel.findById(res.locals.user.id)
-  .then(user => {
-    let index = user.favorites.indexOf(req.body.id)
-    user.favorites.splice(index, 1)
-    user.save()
-    res.json(user)
-  })
+  const users = res.locals.user;
+  UserModel.findById(users.id)
+  .populate({path:"listas", populate:{path:"productos"}})
+    .then((user) => {
+      ListModel.find({ name: "Lista de compra" })
+        .then((list) => {
+          let index = list[0].productos.indexOf(req.params.id);
+          list[0].productos.splice(index, 1);
+          list[0].save();
+          ListModel.find({name:"Lista de casa"})
+          .then((list)=>{
+            list[0].productos.push(req.params.id)
+            list[0].save()
+            res.json(user)
+        })
+        .catch((err)=> res.json(err))
+        })
+        .catch((err) => res.json(err))
+
+    })
+
     .catch((err) => res.json(err));
 }
 function getLista(req, res) {
