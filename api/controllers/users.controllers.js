@@ -1,6 +1,6 @@
 const UserModel = require("../models/user.model");
 const ListModel = require("../models/list.model");
-const ProductsModel = require ("../models/productos.model");
+
 
 const bcrypt = require("bcrypt");
 
