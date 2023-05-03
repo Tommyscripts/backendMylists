@@ -9,7 +9,8 @@ const {
   getListaProducto,
   getLista,
   createListAdd,
-  updateListaRemove,
+  updateListaRemoveCompra,
+  updateListaRemoveCasa
 } = require("../controllers/users.controllers");
 
 router.get("/profile", authUser, getUserById);
@@ -19,5 +20,7 @@ router.delete("/profile", authUser, deleteUserById);
 router.get("/lista", authUser, getLista);
 router.get("/lista/producto", authUser,getListaProducto)
 router.patch("/lista/add", authUser, createListAdd);
-router.patch("/lista/remove", authUser, updateListaRemove);
+router.patch("/lista/remove/compra/:id", authUser, updateListaRemoveCompra);
+router.patch("/lista/remove/:id", authUser, updateListaRemoveCasa);
+
 module.exports = router;
