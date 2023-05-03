@@ -30,8 +30,8 @@ function createList(req, res) {
   function updateList(req, res) {
     ListModel.findById(res.locals.user.id)
     .then(user => {
-      let index = user.favorites.indexOf(req.body.id)
-      user.favorites.splice(index, 1)
+      let index = user.listas.indexOf(req.body.id)
+      user.listas.splice(index, 1)
       user.save()
       res.json(user)
     })
@@ -40,7 +40,7 @@ function createList(req, res) {
   
   function getList(req, res) {
     UserModel.findById(res.locals.user.id)
-      .populate("listas")
+      .populate({path:"listas", populate:{path:"productos"}})
       .then((result) => res.json(result.listas))
       .catch((err) => res.json(err));
   }
