@@ -67,7 +67,9 @@ function getListaProducto(req, res) {
 function createListAdd(req, res) {
   ListModel.findById(req.body.id)
     .then((result) => {
-      result.productos.push(req.body.producto);
+      if(!result.productos.includes(req.body.producto)){
+        result.productos.push(req.body.producto);
+      } 
       result.save();
       res.json(result);
     })
