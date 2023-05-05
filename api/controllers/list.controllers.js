@@ -7,7 +7,8 @@ module.exports = {
   createList,
   updateList,
   getList,
-  deleteListById
+  deleteListById,
+  delteProductoById
 };
 
 function createList(req, res) {
@@ -48,4 +49,11 @@ function createList(req, res) {
     ListModel.findByIdAndDelete(req.params.id)
       .then((response) =>res.json(response))  
       .catch((err) => res.json(err));
+  }
+
+  function delteProductoById(req,res){
+    ListModel.findByIdAndDelete(req.params.id)
+    .populate("productos")
+    .then((response) =>res.json(response))  
+    .catch((err) => res.json(err));
   }
