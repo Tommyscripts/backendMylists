@@ -11,7 +11,7 @@ const router = require("./api/routers/index");
 const mongooseStart = async () => {
     try {
         await mongoose.connect(
-            process.env.MONGO_URL || "mongodb://213.94.18.254/32",
+            process.env.MONGO_URL || "mongodb+srv://javiercabreraescoz:deinherz8@homelist.mkgnqym.mongodb.net/",
             {
                 dbName: process.env.MONGO_DB || "Mylist",
             }
