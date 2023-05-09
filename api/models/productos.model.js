@@ -12,7 +12,7 @@ const productsSchema = new mongoose.Schema({
     categorias: {
         type: String,
         required: true,
-        enum: ["Carnes", "Pescados", "Congelados", "Arroces", "Lacteos y huevos", "Pasta", "Verduras", "Frutas", "Embutidos", "Panaderia", "Frutos secos", "Salsas", "Encurtidos", "Café y azúcar", "Bollería", "Limpieza"]
+        enum: ["Carnes", "Pescados", "Congelados", "Arroces", "Lacteos y huevos", "Pasta", "Verduras", "Frutas", "Embutidos", "Panaderia", "Frutos secos", "Salsas", "Encurtidos", "Café y azúcar", "Bollería", "Limpieza", "Bebidas"]
     }
 })
 
