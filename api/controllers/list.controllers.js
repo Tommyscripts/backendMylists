@@ -56,7 +56,6 @@ function createList(req, res) {
     .populate("productos")
     .then((response)  => {
       let index = response.productos.indexOf(req.params.list)
-      console.log(response)
       response.productos.splice(index, 1)
       response.save()
        res.json(response)})  
