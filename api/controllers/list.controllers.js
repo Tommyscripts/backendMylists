@@ -51,9 +51,19 @@ function createList(req, res) {
       .catch((err) => res.json(err));
   }
 
-  function delteProductoById(req,res){
-    ListModel.findByIdAndDelete(req.params.id)
-    .populate("productos")
-    .then((response) =>res.json(response))  
-    .catch((err) => res.json(err));
+  function delteProductoById(req, res) {
+    ListModel.findById(req.params.id)
+      .populate("productos")
+      .then((response) => {
+        let index = response.productos.findIndex(producto => producto._id == req.params.list);
+        if (index !== -1) {
+          response.productos.splice(index, 1);
+          response.save();
+          res.json(response);
+        } else {
+          res.json({ message: "El producto no se encontró en la lista" });
+        }
+      })
+      .catch((err) => res.json(err));
   }
+  

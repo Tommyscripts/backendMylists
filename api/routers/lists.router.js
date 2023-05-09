@@ -14,5 +14,5 @@ router.get("/list", authUser,roleCheck, getList)
 router.post("/list", authUser,roleCheck, createList);
 router.patch("/list", authUser,roleCheck, updateList);
 router.delete("/list/:id", authUser, deleteListById);
-router.delete("list/producto:id",authUser,delteProductoById)
+router.delete("/list/:id/producto/:list",authUser,delteProductoById)
 module.exports = router;
