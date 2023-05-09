@@ -52,8 +52,13 @@ function createList(req, res) {
   }
 
   function delteProductoById(req,res){
-    ListModel.findByIdAndDelete(req.params.id)
+    ListModel.findById(req.params.id)
     .populate("productos")
-    .then((response) =>res.json(response))  
+    .then((response)  => {
+      let index = response.productos.indexOf(req.params.list)
+      console.log(response)
+      response.productos.splice(index, 1)
+      response.save()
+       res.json(response)})  
     .catch((err) => res.json(err));
   }
