@@ -10,9 +10,9 @@ const {
 } = require("../controllers/list.controllers");
 
 
-router.get("/list", authUser,roleCheck, getList)
-router.post("/list", authUser,roleCheck, createList);
-router.patch("/list", authUser,roleCheck, updateList);
+router.get("/list", authUser, getList)
+router.post("/list", authUser, createList);
+router.patch("/list", authUser, updateList);
 router.delete("/list/:id", authUser, deleteListById);
 router.delete("/list/:id/producto/:list",authUser,delteProductoById)
 module.exports = router;
