@@ -13,7 +13,7 @@ const mongooseStart = async () => {
         await mongoose.connect(
             process.env.MONGO_URL || "mongodb+srv://javiercabreraescoz:deinherz8@homelist.mkgnqym.mongodb.net/",
             {
-                dbName: process.env.MONGO_DB || "Mylist",
+                dbName: process.env.MONGO_DB || "Myhomelist",
             }
         );
         console.log("Connected to DB");
