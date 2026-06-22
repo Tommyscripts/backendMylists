@@ -1,7 +1,6 @@
 const ProductsModel = require("../models/productos.model");
 const ListModel = require("../models/list.model")
-const bcrypt = require("bcrypt");
-
+ 
 module.exports = {
   addProduct,
   createProduct,

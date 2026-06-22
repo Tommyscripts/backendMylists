@@ -1,7 +1,7 @@
 const UserModel = require("../models/user.model");
 const ListModel = require("../models/list.model");
 
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 module.exports = {
   getUserById,
