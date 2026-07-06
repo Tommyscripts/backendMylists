@@ -2,7 +2,7 @@
   "name": "package.json",
   "version": "1.0.0",
   "engines": {
-    "node": ">=18.18.1"
+    "node": ">=20.0.0"
   },
   "description": "",
   "main": "index.js",
