@@ -10,7 +10,7 @@ function escapeRegex(value) {
 
 async function signup(req, res) {
   try {
-    const { email, password, ...rest } = req.body;
+    const { email, password, username } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
@@ -22,10 +22,17 @@ async function signup(req, res) {
       return res.status(409).json({ error: 'User already exists' });
     }
 
-    req.body.email = normalizedEmail;
-    req.body.password = bcrypt.hashSync(password, 10);
+    const safeUserData = {
+      username: String(username || "").trim(),
+      email: normalizedEmail,
+      password: bcrypt.hashSync(password, 10),
+    };
 
-    const user = await UserModel.create(req.body);
+    if (!safeUserData.username) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    const user = await UserModel.create(safeUserData);
     const lists = await ListModel.findOne({ name: "Todos los productos" });
     const listas = await ListModel.create({ name: "Lista de compra" });
     const listas2 = await ListModel.create({ name: "Lista de casa" });

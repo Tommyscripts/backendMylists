@@ -25,10 +25,21 @@ function getUserById(req, res) {
 
 function updateUser(req, res) {
   const users = res.locals.user;
-  if (req.body.password) {
-    req.body.password = bcrypt.hashSync(req.body.password, 10);
+  const safeUpdates = {};
+
+  if (req.body.username) {
+    safeUpdates.username = String(req.body.username).trim();
   }
-  UserModel.findByIdAndUpdate(users, req.body, {
+
+  if (req.body.email) {
+    safeUpdates.email = String(req.body.email).trim().toLowerCase();
+  }
+
+  if (req.body.password) {
+    safeUpdates.password = bcrypt.hashSync(req.body.password, 10);
+  }
+
+  UserModel.findByIdAndUpdate(users, safeUpdates, {
     new: true,
   })
     .then((response) => res.json(response))
