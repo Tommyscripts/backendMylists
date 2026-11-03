@@ -3,19 +3,32 @@ const UserModel = require('../models/user.model')
 
 // Authenticate Middleware
 function authUser (req, res, next) {
-  if (!req.headers.token) {
-    res.status(403).json({ error: 'No Token found' })
-  } else {
-    jwt.verify(req.headers.token, process.env.SECRET, (err, token) => {
-      if (err) { res.status(403).json({ error: 'Token not valid' }) }
+  const authHeader = req.headers.authorization || req.headers.token;
 
-      UserModel.findOne({ email: token.email })
-        .then(user => {
-          res.locals.user = user
-          next()
-        })
-    })
+  if (!authHeader) {
+    return res.status(401).json({ error: 'No token found' });
   }
+
+  const token = typeof authHeader === 'string' && authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7)
+    : authHeader;
+
+  jwt.verify(token, process.env.SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Token not valid' });
+    }
+
+    UserModel.findOne({ email: decoded.email })
+      .then(user => {
+        if (!user) {
+          return res.status(401).json({ error: 'User not found' });
+        }
+
+        res.locals.user = user;
+        next();
+      })
+      .catch(() => res.status(500).json({ error: 'Failed to authenticate user' }));
+  });
 }
 function adminCheck (req, res, next) {
   if (res.locals.user.role === 'admin'){

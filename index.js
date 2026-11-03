@@ -28,10 +28,14 @@ mongooseStart()
 
 try {
     // Start Express Server
+    const corsOrigin = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
+        : true;
+
     app
         .use(morgan("dev"))
-        .use(cors())
-        .use(express.json())
+        .use(cors({ origin: corsOrigin, credentials: true }))
+        .use(express.json({ limit: '1mb' }))
         .use('/api', router)
         .listen(3000, (err) => {
             console.info("\n\n" + ">".repeat(40));

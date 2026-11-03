@@ -6,47 +6,61 @@ const UserModel = require("../models/user.model");
 
 async function signup(req, res) {
   try {
-    req.body.password = bcrypt.hashSync(req.body.password, 10);
-    const user = await UserModel.create(req.body);
-    const lists = await ListModel.findOne({ name: "Todos los productos" })
-    const listas = await ListModel.create({name: "Lista de compra"})
-    const listas2 = await ListModel.create({name: "Lista de casa"})
-        user.listas.push(lists._id.toLocaleString());
-        user.listas.push(listas._id.toLocaleString());
-        user.listas.push(listas2._id.toLocaleString());
-        user.save();
-    const payload = { email: user.email };
+    const { email, password, ...rest } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existingUser = await UserModel.findOne({ email: normalizedEmail });
+    if (existingUser) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    req.body.email = normalizedEmail;
+    req.body.password = bcrypt.hashSync(password, 10);
+
+    const user = await UserModel.create(req.body);
+    const lists = await ListModel.findOne({ name: "Todos los productos" });
+    const listas = await ListModel.create({ name: "Lista de compra" });
+    const listas2 = await ListModel.create({ name: "Lista de casa" });
+
+    if (lists) user.listas.push(lists._id.toString());
+    user.listas.push(listas._id.toString());
+    user.listas.push(listas2._id.toString());
+    await user.save();
+
+    const payload = { email: user.email };
     const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "10h" });
-    res.status(200).json({ email: user.email, token }); // token: token
+    res.status(200).json({ email: user.email, token });
   } catch (error) {
-    res.status(500).send(`Error creating user: ${error}`);
+    res.status(500).json({ error: `Error creating user: ${error.message || error}` });
   }
 }
 
 async function login(req, res) {
   try {
-    const user = await UserModel.findOne({ email: req.body.email });
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || '');
+
+    const user = await UserModel.findOne({ email });
     if (!user) {
-      res.status(400).send("Email or password incorrect");
-      return;
+      return res.status(400).json({ error: "Email or password incorrect" });
     }
 
-    bcrypt.compare(req.body.password, user.password, (err, result) => {
-      if (err) throw new Error(err);
+    const result = await bcrypt.compare(password, user.password);
+    if (!result) {
+      return res.status(400).json({ error: "Email or password incorrect" });
+    }
 
-      if (!result) {
-        return res.json({ error: "Email or password incorrect" });
-      }
-
-      const token = jwt.sign({ email: user.email }, process.env.SECRET, {
-        expiresIn: "10h",
-      });
-
-      res.status(200).json({ email: user.email, token });
+    const token = jwt.sign({ email: user.email }, process.env.SECRET, {
+      expiresIn: "10h",
     });
+
+    return res.status(200).json({ email: user.email, token });
   } catch (error) {
-    res.status(500).send("Error logging user");
+    return res.status(500).json({ error: "Error logging user" });
   }
 }
 
