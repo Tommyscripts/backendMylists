@@ -8,24 +8,46 @@ function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function isBcryptHash(value) {
+  return typeof value === "string" && /^\$2[aby]\$/.test(value);
+}
+
+async function passwordMatches(inputPassword, storedPassword) {
+  if (!storedPassword || !inputPassword) {
+    return false;
+  }
+
+  if (isBcryptHash(storedPassword)) {
+    return bcrypt.compare(inputPassword, storedPassword);
+  }
+
+  return String(inputPassword) === String(storedPassword);
+}
+
 async function signup(req, res) {
   try {
-    const { email, password, username } = req.body;
+    const { email, password, username, confirmPassword, role } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    if (confirmPassword !== undefined && String(password) !== String(confirmPassword)) {
+      return res.status(400).json({ error: "Las contraseñas no coinciden" });
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
     const existingUser = await UserModel.findOne({ email: normalizedEmail });
     if (existingUser) {
-      return res.status(409).json({ error: 'User already exists' });
+      return res.status(409).json({ error: "User already exists" });
     }
 
+    const allowedRole = role === "admin" ? "admin" : "user";
     const safeUserData = {
       username: String(username || "").trim(),
       email: normalizedEmail,
       password: bcrypt.hashSync(password, 10),
+      role: allowedRole,
     };
 
     if (!safeUserData.username) {
@@ -52,9 +74,9 @@ async function signup(req, res) {
 
 async function login(req, res) {
   try {
-    const identifier = String(req.body.email || "").trim();
+    const identifier = String(req.body.email || req.body.username || "").trim();
     const normalizedIdentifier = identifier.toLowerCase();
-    const password = String(req.body.password || '');
+    const password = String(req.body.password || "");
 
     if (!identifier || !password) {
       return res.status(400).json({ error: "Email or password incorrect" });
@@ -73,9 +95,13 @@ async function login(req, res) {
 
     let matchedUser = null;
     for (const candidate of candidates) {
-      const isMatch = await bcrypt.compare(password, candidate.password);
+      const isMatch = await passwordMatches(password, candidate.password);
       if (isMatch) {
         matchedUser = candidate;
+        if (!isBcryptHash(candidate.password)) {
+          candidate.password = bcrypt.hashSync(password, 10);
+          await candidate.save();
+        }
         break;
       }
     }

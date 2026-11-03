@@ -53,19 +53,55 @@ function deleteUserById(req, res) {
 }
 
 function createUser(req, res) {
-  if (req.body.password) {
-    req.body.password = bcrypt.hashSync(req.body.password, 10);
+  const { username, email, password } = req.body || {};
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+
+  if (!normalizedEmail || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
   }
-  UserModel.create(req.body)
+
+  const safeUserData = {
+    username: String(username || "").trim(),
+    email: normalizedEmail,
+    password: bcrypt.hashSync(String(password), 10),
+    role: "admin",
+  };
+
+  if (!safeUserData.username) {
+    return res.status(400).json({ error: "Username is required" });
+  }
+
+  UserModel.findOne({ email: normalizedEmail })
+    .then((existingUser) => {
+      if (existingUser) {
+        return res.status(409).json({ error: "User already exists" });
+      }
+
+      return UserModel.create(safeUserData);
+    })
     .then((user) => {
       ListModel.findOne({ name: "Todos los productos" })
-        .then((res) => {
-          user.listas.push(res._id.toLocaleString());
-          user.save(), res.json(user);
+        .then((defaultList) => {
+          if (defaultList && !user.listas.includes(defaultList._id.toString())) {
+            user.listas.push(defaultList._id.toString());
+          }
+          const compraList = new ListModel({ name: "Lista de compra" });
+          const casaList = new ListModel({ name: "Lista de casa" });
+
+          return Promise.all([
+            compraList.save(),
+            casaList.save(),
+            user.save(),
+          ]).then(() => {
+            user.listas.push(compraList._id.toString());
+            user.listas.push(casaList._id.toString());
+            return user.save();
+          });
         })
-        .catch((err) => res.json(err));
+        .then(() => res.status(201).json({ message: "Admin created successfully" }))
+        .catch((err) => res.status(500).json({ error: err.message || err }));
     })
-    .catch((err) => res.json(err));
+    .catch((err) => res.status(500).json({ error: err.message || err }));
 }
 
 function getListaProducto(req, res) {
@@ -89,8 +125,7 @@ function createListAdd(req, res) {
 
 function updateListaRemoveCasa(req, res) {
   const users = res.locals.user;
-  console.log(req.params)
-  UserModel.findById(users.id)
+UserModel.findById(users.id)
     .populate({ path: "listas", populate: { path: "productos" } })
     .then((user) => {
       ListModel.findById( req.params.lista )

@@ -17,10 +17,8 @@ const mongooseStart = async () => {
                 dbName: process.env.MONGO_DB || "Myhomelist",
             }
         );
-        console.log("Connected to DB");
-    } catch (err) {
-        console.log(`Error connecting to DB: ${err}`);
-    }
+} catch (err) {
+}
 };
 
 // Start DB Connection 
@@ -38,11 +36,8 @@ try {
         .use(express.json({ limit: '1mb' }))
         .use('/api', router)
         .listen(3000, (err) => {
-            console.info("\n\n" + ">".repeat(40));
-            console.info('💻  My list');
-            console.info('📡  PORT: http://localhost:3000');
-            console.info(">".repeat(40) + "\n\n");
+;
+;
         });
 } catch (err) {
-    console.log(`Error launching Server: ${err}`);
 }
