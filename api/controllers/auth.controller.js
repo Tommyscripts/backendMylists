@@ -52,19 +52,21 @@ async function signup(req, res) {
 
 async function login(req, res) {
   try {
-    const rawEmail = String(req.body.email || "").trim();
-    const email = rawEmail.toLowerCase();
+    const identifier = String(req.body.email || "").trim();
+    const normalizedIdentifier = identifier.toLowerCase();
     const password = String(req.body.password || '');
 
-    if (!rawEmail || !password) {
+    if (!identifier || !password) {
       return res.status(400).json({ error: "Email or password incorrect" });
     }
 
     const user = await UserModel.findOne({
       $or: [
-        { email },
-        { email: rawEmail },
-        { email: { $regex: new RegExp(`^${escapeRegex(rawEmail)}$`, "i") } },
+        { email: normalizedIdentifier },
+        { email: identifier },
+        { email: { $regex: new RegExp(`^${escapeRegex(identifier)}$`, "i") } },
+        { username: identifier },
+        { username: { $regex: new RegExp(`^${escapeRegex(identifier)}$`, "i") } },
       ],
     });
     if (!user) {
