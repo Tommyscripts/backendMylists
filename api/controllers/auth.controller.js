@@ -60,29 +60,35 @@ async function login(req, res) {
       return res.status(400).json({ error: "Email or password incorrect" });
     }
 
-    const user = await UserModel.findOne({
+    const candidates = await UserModel.find({
       $or: [
-        { email: normalizedIdentifier },
         { email: identifier },
+        { email: normalizedIdentifier },
         { email: { $regex: new RegExp(`^${escapeRegex(identifier)}$`, "i") } },
         { username: identifier },
+        { username: normalizedIdentifier },
         { username: { $regex: new RegExp(`^${escapeRegex(identifier)}$`, "i") } },
       ],
-    });
-    if (!user) {
+    }).limit(20);
+
+    let matchedUser = null;
+    for (const candidate of candidates) {
+      const isMatch = await bcrypt.compare(password, candidate.password);
+      if (isMatch) {
+        matchedUser = candidate;
+        break;
+      }
+    }
+
+    if (!matchedUser) {
       return res.status(400).json({ error: "Email or password incorrect" });
     }
 
-    const result = await bcrypt.compare(password, user.password);
-    if (!result) {
-      return res.status(400).json({ error: "Email or password incorrect" });
-    }
-
-    const token = jwt.sign({ email: user.email }, process.env.SECRET, {
+    const token = jwt.sign({ email: matchedUser.email }, process.env.SECRET, {
       expiresIn: "10h",
     });
 
-    return res.status(200).json({ email: user.email, token });
+    return res.status(200).json({ email: matchedUser.email, token });
   } catch (error) {
     return res.status(500).json({ error: "Error logging user" });
   }
