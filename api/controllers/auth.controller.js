@@ -4,6 +4,10 @@ const jwt = require("jsonwebtoken");
 const ListModel = require("../models/list.model");
 const UserModel = require("../models/user.model");
 
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 async function signup(req, res) {
   try {
     const { email, password, ...rest } = req.body;
@@ -41,10 +45,21 @@ async function signup(req, res) {
 
 async function login(req, res) {
   try {
-    const email = String(req.body.email || '').trim().toLowerCase();
+    const rawEmail = String(req.body.email || "").trim();
+    const email = rawEmail.toLowerCase();
     const password = String(req.body.password || '');
 
-    const user = await UserModel.findOne({ email });
+    if (!rawEmail || !password) {
+      return res.status(400).json({ error: "Email or password incorrect" });
+    }
+
+    const user = await UserModel.findOne({
+      $or: [
+        { email },
+        { email: rawEmail },
+        { email: { $regex: new RegExp(`^${escapeRegex(rawEmail)}$`, "i") } },
+      ],
+    });
     if (!user) {
       return res.status(400).json({ error: "Email or password incorrect" });
     }
